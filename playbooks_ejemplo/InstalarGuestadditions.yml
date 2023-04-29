@@ -1,0 +1,19 @@
+---
+- name: Actualizar Guest Additions en máquinas virtuales
+  hosts: hosts  # nombre de los hosts de destino
+  become: yes  # utilizar privilegios elevados para ejecutar el playbook
+  tasks:
+    - name: Montar el dispositivo /dev/sr0 en /mnt
+      mount:  # módulo "mount" para montar dispositivos
+        path: /mnt  # ruta de montaje
+        src: /dev/sr0  # dispositivo fuente a montar
+        state: mounted  # estado deseado (montado)
+        fstype: iso9660
+        state: mounted
+        
+    - name: Ejecutar VBoxLinuxAdditions.run
+      command: /mnt/VBoxLinuxAdditions.run --nox11  # ejecutar el archivo VBoxLinuxAdditions.run desde /mnt sin X11
+      args:
+        chdir: /mnt  # cambiar al directorio /mnt antes de ejecutar el comando
+      register: result  # almacenar la salida del comando en la variable "result"
+    - debug: var=result  # imprimir la variable "result" para ver la salida del comando
