@@ -35,7 +35,7 @@ Vagrant.configure("2") do |config|
   end
 
   # Configuración de dos máquinas virtuales objetivo
-  (1..2).each do |i|
+  (1..3).each do |i|
     config.vm.define "objetivo#{i}" do |objetivo|
       objetivo.vm.box = "ubuntu/jammy64"
       objetivo.vm.hostname = "objetivo#{i}"

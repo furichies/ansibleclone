@@ -37,4 +37,12 @@ EOF
 chown vagrant /home/vagrant/.ssh/id_rsa
 chown vagrant /home/vagrant/.ssh/id_rsa.pub
 chmod 400 /home/vagrant/.ssh/id_rsa
+
+#entradas al fichero host
+echo "192.168.57.10 master" >> /etc/hosts
+echo "192.168.57.20 docker" >> /etc/hosts
+echo "192.168.57.21 objetivo1" >> /etc/hosts
+echo "192.168.57.22 objetivo2" >> /etc/hosts
+echo "192.168.57.23 objetivo3" >> /etc/hosts
+
 echo "APROVISIONAMIENTO EJECUTADO"
