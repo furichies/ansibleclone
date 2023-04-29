@@ -1,0 +1,16 @@
+---
+- name: Agregar nodos al clúster GlusterFS
+  hosts: docker
+  become: true
+  tasks:
+    - name: Ejecutar comando 'gluster peer' en objetivo1
+      command: gluster peer probe objetivo1
+      ignore_errors: yes
+
+    - name: Ejecutar comando 'gluster peer' en objetivo2
+      command: gluster peer probe objetivo2
+      ignore_errors: yes
+
+    - name: Ejecutar comando 'gluster peer' en objetivo3
+      command: gluster peer probe objetivo3
+      ignore_errors: yes

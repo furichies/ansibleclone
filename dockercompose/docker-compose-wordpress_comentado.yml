@@ -1,0 +1,42 @@
+# Versión de la sintaxis de Docker Compose
+version: '3'
+
+# Definición de los servicios que se utilizarán
+services:
+
+  # Servicio de la base de datos MariaDB
+  mariadb:
+    image: mariadb # Imagen de Docker que se utilizará
+    container_name: mariadb # Nombre del contenedor
+    restart: always # Política de reinicio del contenedor
+    environment: # Variables de entorno para la base de datos
+      MYSQL_DATABASE: bd_wp # Nombre de la base de datos
+      MYSQL_USER: user_wp # Usuario de la base de datos
+      MYSQL_PASSWORD: CaM1n0K0yoT3 # Contraseña del usuario de la base de datos
+      MYSQL_ROOT_PASSWORD: CaM1n0K0yoT3 # Contraseña de root de la base de datos
+    volumes: # Volumen para persistir los datos de la base de datos
+      - /opt/mysql_wp:/var/lib/mysql
+    networks: # Red a la que estará conectado el contenedor
+      - red_interna
+
+  # Servicio de la aplicación WordPress
+  wordpress:
+    image: wordpress # Imagen de Docker que se utilizará
+    container_name: wordpress # Nombre del contenedor
+    restart: always # Política de reinicio del contenedor
+    environment: # Variables de entorno para la aplicación
+      WORDPRESS_DB_HOST: mariadb # Host de la base de datos
+      WORDPRESS_DB_USER: user_wp # Usuario de la base de datos
+      WORDPRESS_DB_PASSWORD: CaM1n0K0yoT3 # Contraseña del usuario de la base de datos
+      WORDPRESS_DB_NAME: bd_wp # Nombre de la base de datos
+    ports: # Puertos que se expondrán en el contenedor
+      - "80:80"
+    volumes: # Volumen para persistir los datos de la aplicación
+      - /opt/wordpress:/var/www/html/wp-content
+    networks: # Red a la que estará conectado el contenedor
+      - red_interna
+
+# Definición de la red interna a utilizar
+networks:
+  red_interna:
+    driver: bridge

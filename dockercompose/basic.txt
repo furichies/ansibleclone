@@ -1,0 +1,47 @@
+Concepto volumen 
+richiinstructorformacion/barometrico
+
+7000 barom.py
+
+
+
+docker network create red_interna
+docker run -d --name mariadb --network red_interna -v /opt/mysql_wp:/var/lib/mysql -e MYSQL_DATABASE=bd_wp -e MYSQL_USER=user_wp -e MYSQL_PASSWORD=CaM1n0K0yoT3 -e MYSQL_ROOT_PASSWORD=CaM1n0K0yoT3 mariadb
+docker run -d --name wordpress --network red_interna -v /opt/wordpress:/var/www/html/wp-content  -e WORDPRESS_DB_HOST=mariadb -e WORDPRESS_DB_USER=user_wp -e WORDPRESS_DB_PASSWORD=CaM1n0K0yoT3 -e WORDPRESS_DB_NAME=bd_wp -p 80:80 wordpress
+
+version: '3'
+
+services:
+  mariadb:
+    image: mariadb
+    container_name: mariadb
+    restart: always
+    environment:
+      MYSQL_DATABASE: bd_wp
+      MYSQL_USER: user_wp
+      MYSQL_PASSWORD: CaM1n0K0yoT3
+      MYSQL_ROOT_PASSWORD: CaM1n0K0yoT3
+    volumes:
+      - /opt/mysql_wp:/var/lib/mysql
+    networks:
+      - red_interna
+
+  wordpress:
+    image: wordpress
+    container_name: wordpress
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: mariadb
+      WORDPRESS_DB_USER: user_wp
+      WORDPRESS_DB_PASSWORD: CaM1n0K0yoT3
+      WORDPRESS_DB_NAME: bd_wp
+    ports:
+      - "80:80"
+    volumes:
+      - /opt/wordpress:/var/www/html/wp-content
+    networks:
+      - red_interna
+
+networks:
+  red_interna:
+    driver: bridge

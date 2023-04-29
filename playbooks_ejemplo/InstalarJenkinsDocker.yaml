@@ -1,0 +1,18 @@
+---
+- hosts: docker
+  become: yes
+  tasks:
+    - name: Instalar biblioteca de Docker SDK para Python
+      pip:
+        name: docker
+        state: present
+    
+    - name: Ejecutar contenedor de Jenkins
+      docker_container:
+        name: jenkins
+        image: jenkins/jenkins:lts
+        ports:
+          - "8080:8080"
+          - "50000:50000"
+        restart_policy: always
+        state: started

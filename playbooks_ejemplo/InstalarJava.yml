@@ -1,0 +1,8 @@
+---
+- hosts: objetivos
+  become: yes
+  tasks:
+    - name: Instalar OpenJDK 11 JRE
+      apt:
+        name: openjdk-11-jre
+        state: present

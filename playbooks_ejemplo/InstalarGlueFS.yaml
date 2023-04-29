@@ -1,0 +1,30 @@
+---
+- hosts: all
+  become: yes
+  
+  tasks:
+    - name: Verificar si python-apt está instalado
+      stat:
+        path: /usr/lib/python3/dist-packages/apt
+      register: python_apt
+      
+    - name: Instalar python-apt si no está instalado
+      apt:
+        name: python3-apt
+        state: present
+      when: not python_apt.stat.exists
+      
+    - name: Agregar repositorio GlusterFS
+      apt_repository:
+        repo: 'ppa:gluster/glusterfs-9'
+      
+    - name: Instalar GlusterFS Server
+      apt:
+        name: glusterfs-server
+        state: present
+      
+    - name: Verificar si el servicio GlusterFS está habilitado e iniciado
+      service:
+        name: glusterd
+        state: started
+        enabled: yes

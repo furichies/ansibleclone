@@ -1,0 +1,33 @@
+---
+- name: Instalar Docker en Ubuntu
+  hosts: docker
+  become: yes
+  tasks:
+    - name: Obtener los hechos del sistema
+      setup:
+    - name: Desinstalar Docker si está instalado
+      apt:
+        name:
+          - docker.io
+        state: absent
+        update_cache: yes
+     # when: 'docker.io' in ansible_facts.packages or 'docker-ce-cli' in ansible_facts.packages or 'containerd.io' in ansible_facts.packages
+    - name: Agregar la clave GPG oficial de Docker
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+    - name: Agregar el repositorio de Docker
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+        state: present
+    - name: Actualizar la lista de paquetes de apt
+      apt:
+        update_cache: yes
+    - name: Instalar Docker
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+        update_cache: yes

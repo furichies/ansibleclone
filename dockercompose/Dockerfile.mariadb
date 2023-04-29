@@ -1,0 +1,12 @@
+FROM mariadb
+
+ENV MYSQL_DATABASE=bd_wp \
+    MYSQL_USER=user_wp \
+    MYSQL_PASSWORD=CaM1n0K0yoT3 \
+    MYSQL_ROOT_PASSWORD=CaM1n0K0yoT3
+
+VOLUME /var/lib/mysql
+
+EXPOSE 3306
+
+CMD ["mysqld"]

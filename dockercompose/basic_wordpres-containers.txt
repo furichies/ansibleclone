@@ -1,0 +1,63 @@
+# creación de una red
+
+docker network create red_interna
+
+#crea contenedor con mariadb 
+
+docker run -d --name mariadb --network red_interna -v /opt/mysql_wp:/var/lib/mysql -e MYSQL_DATABASE=bd_wp -e MYSQL_USER=user_wp -e MYSQL_PASSWORD=CaM1n0K0yoT3 -e MYSQL_ROOT_PASSWORD=CaM1n0K0yoT3 mariadb
+
+# crea contendor con wordpress
+
+docker run -d --name wordpress --network red_interna -v /opt/wordpress:/var/www/html/wp-content  -e WORDPRESS_DB_HOST=mariadb -e WORDPRESS_DB_USER=user_wp -e WORDPRESS_DB_PASSWORD=CaM1n0K0yoT3 -e WORDPRESS_DB_NAME=bd_wp -p 80:80 wordpress
+
+
+
+# servicios
+
+
+docker service create --name mariadb --network devops -v /opt/mysql_wp:/var/lib/mysql -e MYSQL_DATABASE=bd_wp -e MYSQL_USER=user_wp -e MYSQL_PASSWORD=CaM1n0K0yoT3 -e MYSQL_ROOT_PASSWORD=CaM1n0K0yoT3 mariadb
+
+docker service create --name wordpress --network devops -v /opt/wordpress:/var/www/html/wp-content -e WORDPRESS_DB_HOST=mariadb -e WORDPRESS_DB_USER=user_wp -e WORDPRESS_DB_PASSWORD=CaM1n0K0yoT3 -e WORDPRESS_DB_NAME=bd_wp -p 80:80 wordpress
+
+docker volume create wordpress_data
+docker service create --name wordpress --mount type=volume,source=wordpress_data,destination=/var/www/html/wp-content --network devops -e WORDPRESS_DB_HOST=mariadb -e WORDPRESS_DB_USER=user_wp -e WORDPRESS_DB_PASSWORD=CaM1n0K0yoT3 -e WORDPRESS_DB_NAME=bd_wp -p 80:80 wordpress
+docker service create mariadb_data
+docker service create --name mariadb --mount type=volume,source=mariadb_data,destination=/var/lib/mysql --network devops -e MYSQL_DATABASE=bd_wp -e MYSQL_USER=user_wp -e MYSQL_PASSWORD=CaM1n0K0yoT3 -e MYSQL_ROOT_PASSWORD=CaM1n0K0yoT3 mariadb
+
+Aumentando las replicas da la inconsistencia en la base de datos
+
+Plugins $$$$$$$$$$$$$$$$$$$$$$$
+
+docker volume create --driver vxlan --opt vxlan-id=10 --opt subnet=192.168.57.0/24 mariadb_data 
+
+
+################### GLUSTERFS 
+
+add-apt-repository ppa:gluster/glusterfs-9
+apt install glusterfs-server
+systemctl enabled glusterd
+systemctl start glusterd
+
+desde docker
+
+gluster peer probe objetivo1 (repetir con el resto)
+
+ansible docker -m shell -a "gluster volume create gfs replica 4 docker:/data objetivo1:/data objetivo2:/data objetivo3:/data force" --become
+
+ansible docker -m shell -a "gluster volume start gfs" --become
+
+ansible docker -m shell -a "gluster volume status gfs" --become
+
+ansible all -m shell -a "mkdir /almacen" --become
+
+ansible all -m shell -a "echo 'localhost:/gfs /almacen glusterfs defaults,_netdev,backupvolfile-server=localhost 0 0' >> /etc/fstab" --become
+
+ansible all -m shell -a "mount.glusterfs localhost:/gfs /almacen" --become
+
+ansible all -m shell -a "mkdir /almacen/wp-content" --become
+
+ansible all -m shell -a "mkdir /almacen/mysql" --become
+
+
+vagrant@docker:~$ docker stack deploy -c ./DockerStack-Wordpress.yaml wordpress
+

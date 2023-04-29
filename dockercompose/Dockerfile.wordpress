@@ -1,0 +1,12 @@
+FROM wordpress
+
+ENV WORDPRESS_DB_HOST=mariadb \
+    WORDPRESS_DB_USER=user_wp \
+    WORDPRESS_DB_PASSWORD=CaM1n0K0yoT3 \
+    WORDPRESS_DB_NAME=bd_wp
+
+VOLUME /var/www/html/wp-content
+
+EXPOSE 80
+
+CMD ["apache2-foreground"]
