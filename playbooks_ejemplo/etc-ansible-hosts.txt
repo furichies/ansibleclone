@@ -1,0 +1,7 @@
+[docker]
+jenkins ansible_host=192.168.57.20
+[objetivos]
+objetivo1 ansible_host=192.168.57.21
+objetivo2 ansible_host=192.168.57.22
+objetivo3 ansible_host=192.168.57.23
+
